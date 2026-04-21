@@ -1,4 +1,5 @@
-import { motion } from "motion/react";
+import { useState } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import { 
   Phone, 
   MapPin, 
@@ -13,8 +14,12 @@ import {
   GraduationCap,
   Beer,
   PartyPopper,
-  Target
+  Target,
+  Menu,
+  X
 } from "lucide-react";
+
+import BookingCalendar from "./components/BookingCalendar";
 
 // Images mapping
 const IMAGES = {
@@ -33,6 +38,16 @@ const WHATSAPP_NUMBER = "5493814181238";
 const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}`;
 
 export default function App() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const navLinks = [
+    { name: "Inicio", href: "#inicio" },
+    { name: "Nosotros", href: "#quienes-somos" },
+    { name: "Servicios", href: "#servicios" },
+    { name: "Actividades", href: "#actividades" },
+    { name: "Reserva", href: "#reserva" },
+  ];
+
   return (
     <div className="min-h-screen bg-[#0f172a] font-sans text-white scroll-smooth selection:bg-accent-pink selection:text-white relative">
       {/* Background Blobs */}
@@ -56,52 +71,93 @@ export default function App() {
       </motion.a>
 
       {/* Navbar */}
-      <nav className="fixed top-0 w-full z-40 glass-panel border-b border-glass-border">
-        <div className="max-w-7xl mx-auto px-4 h-24 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <img src={IMAGES.LOGO} alt="Twister Logo" className="h-20 w-auto" referrerPolicy="no-referrer" />
-            <span className="font-black text-2xl tracking-tight text-white">TWISTER</span>
+      <nav className="fixed top-0 w-full z-50 glass-panel border-b border-glass-border">
+        <div className="max-w-7xl mx-auto px-4 h-20 md:h-24 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img src={IMAGES.LOGO} alt="Twister Logo" className="h-14 md:h-20 w-auto" referrerPolicy="no-referrer" />
+            <span className="font-black text-xl md:text-2xl tracking-tight text-white">TWISTER</span>
           </div>
+
+          {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
-            <a href="#inicio" className="hover:text-white transition-colors">Inicio</a>
-            <a href="#quienes-somos" className="hover:text-white transition-colors">Nosotros</a>
-            <a href="#servicios" className="hover:text-white transition-colors">Servicios</a>
-            <a href="#actividades" className="hover:text-white transition-colors">Actividades</a>
+            {navLinks.map((link) => (
+              <a key={link.name} href={link.href} className="hover:text-white transition-colors">{link.name}</a>
+            ))}
             <a href="#contacto" className="bg-white text-[#0f172a] px-6 py-2.5 rounded-xl hover:scale-105 transition-all font-bold">Contactar</a>
           </div>
+
+          {/* Mobile Toggle */}
+          <button 
+            className="md:hidden text-white p-2"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            {isMenuOpen ? <X /> : <Menu />}
+          </button>
         </div>
+
+        {/* Mobile Nav */}
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden glass-panel border-t border-glass-border overflow-hidden bg-slate-900/95 backdrop-blur-3xl"
+            >
+              <div className="flex flex-col p-6 gap-6">
+                {navLinks.map((link) => (
+                  <a 
+                    key={link.name} 
+                    href={link.href} 
+                    className="text-lg font-medium text-slate-300 hover:text-white"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {link.name}
+                  </a>
+                ))}
+                <a 
+                  href="#contacto" 
+                  className="bg-white text-[#0f172a] px-6 py-4 rounded-xl text-center font-bold"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Contactar
+                </a>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       <main>
         {/* Hero Section */}
-        <section id="inicio" className="relative pt-40 pb-20 overflow-hidden">
-          <div className="max-w-7xl mx-auto px-4 glass-panel rounded-[2rem] p-12 md:p-20 grid lg:grid-cols-2 gap-12 items-center shadow-2xl">
+        <section id="inicio" className="relative pt-32 md:pt-40 pb-16 md:pb-20 overflow-hidden">
+          <div className="max-w-7xl mx-auto px-4 glass-panel rounded-[2rem] p-8 md:p-20 grid lg:grid-cols-2 gap-12 items-center shadow-2xl relative z-10 mx-4 lg:mx-auto">
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <div className="inline-block px-4 py-1.5 rounded-full bg-accent-blue/20 border border-accent-blue/30 text-accent-blue text-xs font-bold uppercase tracking-widest mb-8">
+              <div className="inline-block px-4 py-1.5 rounded-full bg-accent-blue/20 border border-accent-blue/30 text-accent-blue text-xs font-bold uppercase tracking-widest mb-6 md:mb-8">
                 CURSO PROFESIONAL TWISTER
               </div>
-              <h1 className="text-6xl md:text-8xl font-extrabold text-gradient leading-[1.1] mb-8 pb-2">
+              <h1 className="text-5xl md:text-8xl font-extrabold text-gradient leading-[1.1] mb-8 pb-2">
                 Domina la <br />
                 Diversión <br />
                 Activa.
               </h1>
-              <p className="text-xl text-slate-400 mb-10 max-w-lg leading-relaxed">
+              <p className="text-lg md:text-xl text-slate-400 mb-10 max-w-lg leading-relaxed">
                 Accede al programa detallado del único complejo habilitado en Tucumán y comienza tu transformación recreativa hoy mismo.
               </p>
-              <div className="flex flex-wrap gap-6">
+            <div className="flex flex-col sm:flex-row flex-wrap gap-4 md:gap-6">
                 <a 
                   href={WHATSAPP_LINK}
-                  className="bg-white text-[#0f172a] px-10 py-4 rounded-xl font-bold text-lg hover:scale-105 hover:shadow-2xl hover:shadow-white/10 transition-all shadow-xl flex items-center gap-2"
+                  className="bg-white text-[#0f172a] px-8 md:px-10 py-4 rounded-xl font-bold text-base md:text-lg hover:scale-105 hover:shadow-2xl hover:shadow-white/10 transition-all shadow-xl flex items-center justify-center gap-2"
                 >
                   ¡Quiero ir! <Phone className="w-5 h-5" />
                 </a>
                 <a 
                   href="#servicios"
-                  className="bg-[#25d366] text-white px-10 py-4 rounded-xl font-bold text-lg hover:scale-105 hover:shadow-2xl hover:shadow-green-500/20 transition-all shadow-xl flex items-center gap-2"
+                  className="bg-[#25d366] text-white px-8 md:px-10 py-4 rounded-xl font-bold text-base md:text-lg hover:scale-105 hover:shadow-2xl hover:shadow-green-500/20 transition-all shadow-xl flex items-center justify-center gap-2"
                 >
                   WhatsApp Directo <Camera className="w-5 h-5" />
                 </a>
@@ -113,9 +169,9 @@ export default function App() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
-              <div className="aspect-[9/16] max-h-[70vh] mx-auto rounded-[2rem] overflow-hidden shadow-2xl relative z-10 border border-glass-border glass-card p-2 bg-black/20">
+              <div className="aspect-square md:aspect-[4/5] rounded-[2rem] overflow-hidden shadow-2xl relative z-10 border border-glass-border glass-card p-4">
                 <iframe 
-                  src="https://drive.google.com/file/d/1tuFmb7-i0dbhH8ShoL5iRJDhP_-64Ud0/preview?autoplay=1" 
+                  src="https://drive.google.com/file/d/1tuFmb7-i0dbhH8ShoL5iRJDhP_-64Ud0/preview" 
                   className="w-full h-full rounded-[1.5rem]"
                   allow="autoplay; encrypted-media"
                   allowFullScreen
@@ -127,14 +183,14 @@ export default function App() {
         </section>
 
         {/* Quienes Somos */}
-        <section id="quienes-somos" className="py-24">
+        <section id="quienes-somos" className="py-16 md:py-24">
           <div className="max-w-7xl mx-auto px-4">
-            <div className="grid md:grid-cols-2 gap-16 items-center glass-panel p-12 rounded-[2.5rem] relative overflow-hidden">
+            <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-center glass-panel p-8 md:p-12 rounded-[2.5rem] relative overflow-hidden">
               <div className="order-2 md:order-1 relative z-10">
                 <img 
                   src={IMAGES.POOL} 
                   alt="Nuestras Piscinas" 
-                  className="rounded-3xl shadow-2xl border border-glass-border transition-all duration-700"
+                  className="w-full rounded-3xl shadow-2xl border border-glass-border transition-all duration-700"
                   referrerPolicy="no-referrer"
                 />
                 <div className="absolute -bottom-6 -right-6 glass-card p-6 rounded-2xl hidden lg:block shadow-2xl">
@@ -177,14 +233,14 @@ export default function App() {
         </section>
 
         {/* Servicios */}
-        <section id="servicios" className="py-24">
+        <section id="servicios" className="py-16 md:py-24">
           <div className="max-w-7xl mx-auto px-4">
-            <div className="text-center mb-20">
+            <div className="text-center mb-16 md:mb-20">
               <span className="badge px-4 py-1 bg-accent-blue/10 border border-accent-blue/20 text-accent-blue rounded-full text-xs font-bold mb-4 uppercase tracking-[0.2em]">Metodología Exclusiva</span>
-              <h2 className="text-5xl font-extrabold text-white mb-6 tracking-tighter">NUESTROS <span className="text-gradient">SERVICIOS</span></h2>
-              <p className="text-slate-400 max-w-2xl mx-auto text-lg leading-relaxed">Más de 35.000 alumnos ya vivieron la transformación Twister.</p>
+              <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-6 tracking-tighter">NUESTROS <span className="text-gradient">SERVICIOS</span></h2>
+              <p className="text-slate-400 max-w-2xl mx-auto text-base md:text-lg leading-relaxed">Más de 35.000 alumnos ya vivieron la transformación Twister.</p>
             </div>
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
               {[
                 { title: "Campamentos Egresados", desc: "Primarios y secundarios: máxima diversión con juegos, fiestas temáticas y fogones espectaculares.", icon: <Users /> },
                 { title: "Educativos", desc: "Compañerismo, trabajo en equipo y tareas comunitarias para el crecimiento personal.", icon: <GraduationCap /> },
@@ -210,13 +266,13 @@ export default function App() {
         </section>
 
         {/* Actividades Grid */}
-        <section id="actividades" className="py-24">
+        <section id="actividades" className="py-16 md:py-24">
           <div className="max-w-7xl mx-auto px-4">
-            <div className="grid lg:grid-cols-2 gap-16 items-center glass-panel p-12 md:p-20 rounded-[3rem] relative overflow-hidden">
+            <div className="grid lg:grid-cols-2 gap-10 md:gap-16 items-center glass-panel p-8 md:p-20 rounded-[3rem] relative overflow-hidden">
               <div className="relative z-10">
                 <span className="badge px-4 py-1 bg-accent-blue/10 border border-accent-blue/20 text-accent-blue rounded-full text-xs font-bold mb-6">MÁXIMA ADRENALINA</span>
-                <h2 className="text-6xl font-extrabold text-white mb-10 leading-tight tracking-tighter">ACTIVIDADES <br /> <span className="text-gradient">ORGANIZADAS</span></h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 glass-card p-8 rounded-3xl border border-glass-border">
+                <h2 className="text-4xl md:text-6xl font-extrabold text-white mb-10 leading-tight tracking-tighter uppercase">ACTIVIDADES <br /> <span className="text-gradient">ORGANIZADAS</span></h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 glass-card p-6 md:p-8 rounded-3xl border border-glass-border">
                   {[
                     "Tirolesa (100 mtrs)",
                     "Lona enjabonada",
@@ -242,12 +298,12 @@ export default function App() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                className="relative z-10"
+                className="relative z-10 w-full"
               >
                 <img 
                   src={IMAGES.COLLAGE} 
                   alt="Actividades Collage" 
-                  className="rounded-[2rem] shadow-2xl border-4 border-glass-border transition-all duration-1000" 
+                  className="w-full rounded-[2rem] shadow-2xl border-4 border-glass-border transition-all duration-1000" 
                   referrerPolicy="no-referrer" 
                 />
               </motion.div>
@@ -257,13 +313,13 @@ export default function App() {
         </section>
 
         {/* Galería de Acción */}
-        <section className="py-24 overflow-hidden">
+        <section className="py-16 md:py-24 overflow-hidden">
           <div className="max-w-7xl mx-auto px-4">
-             <div className="flex items-end justify-between mb-16 border-b border-glass-border pb-10">
+             <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 md:mb-16 border-b border-glass-border pb-10">
                <div>
                  <span className="badge px-4 py-1 bg-accent-pink/10 border border-accent-pink/20 text-accent-pink rounded-full text-xs font-bold mb-4 uppercase tracking-[0.2em]">Momentos Twister</span>
-                 <h2 className="text-5xl font-extrabold text-white mb-2 tracking-tighter uppercase">GALERÍA DE <span className="text-gradient">ACCIÓN</span></h2>
-                 <p className="text-slate-400 text-lg">Realidad capturada en cada sonrisa de nuestros campamentistas.</p>
+                 <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-2 tracking-tighter uppercase">GALERÍA DE <span className="text-gradient">ACCIÓN</span></h2>
+                 <p className="text-slate-400 text-base md:text-lg">Realidad capturada en cada sonrisa de nuestros campamentistas.</p>
                </div>
              </div>
              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -285,10 +341,10 @@ export default function App() {
         </section>
 
         {/* Gastronomía */}
-        <section id="gastronomia" className="py-24">
+        <section id="gastronomia" className="py-16 md:py-24">
           <div className="max-w-6xl mx-auto px-4">
-            <div className="glass-panel rounded-[4rem] p-12 md:p-24 relative overflow-hidden shadow-2xl border border-glass-border">
-              <div className="relative z-10 grid lg:grid-cols-2 gap-20 items-center">
+            <div className="glass-panel rounded-[3rem] md:rounded-[4rem] p-8 md:p-24 relative overflow-hidden shadow-2xl border border-glass-border">
+              <div className="relative z-10 grid lg:grid-cols-2 gap-16 md:gap-20 items-center">
                 <div className="hidden lg:block relative">
                    <div className="grid grid-cols-2 gap-6">
                       <div className="space-y-6">
@@ -308,18 +364,18 @@ export default function App() {
                 </div>
                 <div>
                   <span className="badge px-4 py-1 bg-accent-pink/10 border border-accent-pink/20 text-accent-pink rounded-full text-xs font-bold mb-6">ALTA CALIDAD</span>
-                  <h2 className="text-6xl font-extrabold text-white mb-10 tracking-tighter">GASTRONOMÍA <span className="text-gradient">RECREATIVA</span></h2>
-                  <div className="space-y-8">
+                  <h2 className="text-4xl md:text-6xl font-extrabold text-white mb-8 md:mb-10 tracking-tighter uppercase">GASTRONOMÍA <span className="text-gradient">RECREATIVA</span></h2>
+                  <div className="space-y-6 md:space-y-8">
                     {[
                       { t: "Desayuno Continental", d: "Te, mate, leche, café, facturas, medialunas, pastaflora, bollos, tortillas y jugos naturales." },
                       { t: "Meriendas Saludables", d: "Adaptadas al clima, acompañadas de exquisitos salados y opciones proteicas de alta calidad." },
                       { t: "Almuerzo y Cena", d: "Hamburguesas premium, pizza casera, milanesas, quipe, asado y pastas. Menús especiales celíacos/veg." }
                     ].map((item, idx) => (
-                      <div key={idx} className="glass-card p-8 rounded-[2rem] border border-glass-border hover:bg-white/10 transition-all group">
-                        <h4 className="font-bold text-2xl mb-3 text-white flex items-center gap-4">
+                      <div key={idx} className="glass-card p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] border border-glass-border hover:bg-white/10 transition-all group">
+                        <h4 className="font-bold text-xl md:text-2xl mb-3 text-white flex items-center gap-4">
                            <div className="w-3 h-3 rounded-full bg-accent-pink group-hover:scale-125 transition-transform"></div> {item.t}
                         </h4>
-                        <p className="text-slate-400 text-lg group-hover:text-slate-200 transition-colors">{item.d}</p>
+                        <p className="text-slate-400 text-base md:text-lg group-hover:text-slate-200 transition-colors">{item.d}</p>
                       </div>
                     ))}
                   </div>
@@ -331,20 +387,27 @@ export default function App() {
           </div>
         </section>
 
-        {/* Footer */}
-        <footer id="contacto" className="pt-32 pb-16">
+        {/* Reserva / Calendario */}
+        <section id="reserva" className="py-24">
           <div className="max-w-7xl mx-auto px-4">
-            <div className="glass-panel p-16 rounded-[4rem] border border-glass-border shadow-2xl relative overflow-hidden backdrop-blur-3xl">
-              <div className="grid md:grid-cols-4 gap-16 relative z-10">
-                <div className="md:col-span-2">
-                  <div className="flex items-center gap-4 mb-10">
-                    <img src={IMAGES.LOGO} alt="Twister Logo" className="h-32 w-auto p-3 glass-card rounded-3xl" referrerPolicy="no-referrer" />
-                    <span className="font-black text-5xl tracking-tighter text-white uppercase">TWISTER</span>
+            <BookingCalendar />
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer id="contacto" className="pt-20 md:pt-32 pb-8 md:pb-16 text-center md:text-left">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="glass-panel p-8 md:p-16 rounded-[3rem] md:rounded-[4rem] border border-glass-border shadow-2xl relative overflow-hidden backdrop-blur-3xl">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-16 relative z-10">
+                <div className="md:col-span-2 flex flex-col items-center md:items-start text-center md:text-left">
+                  <div className="flex flex-col md:flex-row items-center gap-4 mb-8 md:mb-10">
+                    <img src={IMAGES.LOGO} alt="Twister Logo" className="h-24 md:h-32 w-auto p-3 glass-card rounded-3xl" referrerPolicy="no-referrer" />
+                    <span className="font-black text-4xl md:text-5xl tracking-tighter text-white uppercase">TWISTER</span>
                   </div>
-                  <p className="text-slate-400 max-w-sm text-xl leading-relaxed mb-10">
+                  <p className="text-slate-400 max-w-sm text-lg md:text-xl leading-relaxed mb-10 mx-auto md:mx-0">
                      Líderes en transformación recreativa. Más de 10 años redefiniendo la diversión en el norte argentino.
                   </p>
-                  <div className="flex gap-4">
+                  <div className="flex justify-center md:justify-start gap-4">
                     <a href={WHATSAPP_LINK} className="w-14 h-14 glass-panel rounded-2xl flex items-center justify-center hover:bg-[#25D366] transition-all hover:-translate-y-2 border border-white/10">
                       <Phone className="w-6 h-6 text-white" />
                     </a>
@@ -354,14 +417,14 @@ export default function App() {
                   </div>
                 </div>
                 
-                <div>
-                  <h4 className="text-xs font-black mb-10 uppercase tracking-[0.3em] text-accent-blue">Contacto Directo</h4>
-                  <ul className="space-y-8">
-                    <li className="flex items-start gap-4">
+                <div className="flex flex-col items-center md:items-start">
+                  <h4 className="text-xs font-black mb-6 md:mb-10 uppercase tracking-[0.3em] text-accent-blue">Contacto Directo</h4>
+                  <ul className="space-y-6 md:space-y-8">
+                    <li className="flex flex-col md:flex-row items-center md:items-start gap-2 md:gap-4">
                       <Phone className="w-5 h-5 shrink-0 text-accent-blue" />
                       <a href={WHATSAPP_LINK} className="text-slate-300 hover:text-white transition-colors text-lg font-semibold">+54 9 3814 18-1238</a>
                     </li>
-                    <li className="flex items-start gap-4">
+                    <li className="flex flex-col md:flex-row items-center md:items-start gap-2 md:gap-4">
                       <MapPin className="w-5 h-5 shrink-0 text-accent-blue" />
                       <span className="text-lg text-slate-300">Las Talas, Ruta 157, Tucumán.</span>
                     </li>
@@ -371,9 +434,15 @@ export default function App() {
                 <div className="hidden md:block">
                   <h4 className="text-xs font-black mb-10 uppercase tracking-[0.3em] text-accent-blue">Navegación</h4>
                   <ul className="space-y-4">
-                    {["Inicio", "Nosotros", "Servicios", "Actividades"].map((link) => (
-                      <li key={link}><a href={`#${link.toLowerCase()}`} className="text-slate-400 hover:text-white transition-colors text-lg flex items-center gap-2 group">
-                        <div className="w-0 group-hover:w-3 h-[1px] bg-accent-blue transition-all"></div> {link}
+                    {[
+                      { name: "Inicio", href: "#inicio" },
+                      { name: "Nosotros", href: "#quienes-somos" },
+                      { name: "Servicios", href: "#servicios" },
+                      { name: "Actividades", href: "#actividades" },
+                      { name: "Reserva", href: "#reserva" }
+                    ].map((link) => (
+                      <li key={link.name}><a href={link.href} className="text-slate-400 hover:text-white transition-colors text-lg flex items-center gap-2 group">
+                        <div className="w-0 group-hover:w-3 h-[1px] bg-accent-blue transition-all"></div> {link.name}
                       </a></li>
                     ))}
                   </ul>
